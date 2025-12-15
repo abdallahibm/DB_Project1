@@ -22,7 +22,6 @@ namespace DBapplication
             {
                 myConnection.Open(); //Open a connection with the DB
 
-                // just for illustration when the database is opened, 
                 // this should NOT be shown in GUI to the user in the final application
                 // but we show it here only to make sure that the database is working
                 MessageBox.Show("Successfully connected to the database!");
