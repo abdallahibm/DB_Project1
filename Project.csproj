@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2E991CEE-7015-41BE-91DD-3D609B74EDAE}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Project</RootNamespace>
+    <AssemblyName>Project</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin Sign Up.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admin Sign Up.Designer.cs">
+      <DependentUpon>Admin Sign Up.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Admins Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admins Login.Designer.cs">
+      <DependentUpon>Admins Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Agency Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Agency Login.Designer.cs">
+      <DependentUpon>Agency Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Admin Controller.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admin Controller.Designer.cs">
+      <DependentUpon>Admin Controller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Agency Sign Up.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Agency Sign Up.Designer.cs">
+      <DependentUpon>Agency Sign Up.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Agency Controller.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Agency Controller.Designer.cs">
+      <DependentUpon>Agency Controller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller.cs" />
+    <Compile Include="DBManager.cs" />
+    <Compile Include="Members Booking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Members Booking.Designer.cs">
+      <DependentUpon>Members Booking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Usher Sign Up.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Usher Sign Up.Designer.cs">
+      <DependentUpon>Usher Sign Up.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Members Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Members Login.Designer.cs">
+      <DependentUpon>Members Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Members Sign Up.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Members Sign Up.Designer.cs">
+      <DependentUpon>Members Sign Up.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Usher Controller.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Usher Controller.Designer.cs">
+      <DependentUpon>Usher Controller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Usher Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Usher Login.Designer.cs">
+      <DependentUpon>Usher Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Welcome Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Welcome Form.Designer.cs">
+      <DependentUpon>Welcome Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Admin Sign Up.resx">
+      <DependentUpon>Admin Sign Up.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Admins Login.resx">
+      <DependentUpon>Admins Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Agency Login.resx">
+      <DependentUpon>Agency Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Admin Controller.resx">
+      <DependentUpon>Admin Controller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Agency Sign Up.resx">
+      <DependentUpon>Agency Sign Up.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Agency Controller.resx">
+      <DependentUpon>Agency Controller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Members Booking.resx">
+      <DependentUpon>Members Booking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Usher Sign Up.resx">
+      <DependentUpon>Usher Sign Up.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Members Login.resx">
+      <DependentUpon>Members Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Members Sign Up.resx">
+      <DependentUpon>Members Sign Up.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Usher Controller.resx">
+      <DependentUpon>Usher Controller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Usher Login.resx">
+      <DependentUpon>Usher Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Welcome Form.resx">
+      <DependentUpon>Welcome Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
