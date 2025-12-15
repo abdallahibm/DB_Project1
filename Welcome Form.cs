@@ -31,6 +31,8 @@ namespace Project
         private void label2_Click(object sender, EventArgs e)
         {
 
+
+
         }
 
         private void Members_Login_Button_Click(object sender, EventArgs e)
@@ -50,8 +52,10 @@ namespace Project
        
         private void Admin_Login_Button_Click(object sender, EventArgs e)
         {
+
             Form2 f2 = new Form2();
             f2.Show();
+
         }
     }
 }

@@ -34,6 +34,7 @@
             this.Members_Login_Button = new System.Windows.Forms.Button();
             this.Admin_Login_Button = new System.Windows.Forms.Button();
             this.Ushers_Login_Button = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -109,26 +110,28 @@
             this.Ushers_Login_Button.Text = "Login as an Usher";
             this.Ushers_Login_Button.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(352, 289);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(200, 43);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "login as agency";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(876, 513);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.Ushers_Login_Button);
             this.Controls.Add(this.Admin_Login_Button);
             this.Controls.Add(this.Members_Login_Button);
             this.Controls.Add(this.Sign_Up_Button);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-
-            this.Margin = new System.Windows.Forms.Padding(2);
-
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-
             this.Name = "Form1";
             this.Text = "Welcome Form";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -145,6 +148,7 @@
         private System.Windows.Forms.Button Members_Login_Button;
         private System.Windows.Forms.Button Admin_Login_Button;
         private System.Windows.Forms.Button Ushers_Login_Button;
+        private System.Windows.Forms.Button button1;
     }
 }
 
