@@ -185,7 +185,7 @@ namespace DBapplication
             object result = dbMan.ExecuteScalar(query);
             int count = Convert.ToInt32(result);
 
-            if (count > 1)
+            if (count > 0)
             {
                 return true;
             }
@@ -199,7 +199,7 @@ namespace DBapplication
             string query= "SELECT COUNT(*) FROM Members WHERE SSN = '" + ssn + "';";
             object result = dbMan.ExecuteScalar(query);
             int count = Convert.ToInt32(result);
-            if (count > 1)
+            if (count > 0)
             {
                 return true;
             }
