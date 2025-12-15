@@ -40,6 +40,7 @@ namespace Project
             this.Hide();
         }
 
+
         private void Sign_Up_Button_Click(object sender, EventArgs e)
         {
             Members_Sign_Up_form sign = new Members_Sign_Up_form();
@@ -48,8 +49,7 @@ namespace Project
             this.Show();
         }
 
-
-
+     
 
 
         private void Admin_Login_Button_Click(object sender, EventArgs e)

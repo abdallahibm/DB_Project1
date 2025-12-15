@@ -25,6 +25,7 @@ namespace DBapplication
         }
 
 
+
         public string ValidateAdminLogin(string username, string password)
         {
             // First check if username exists in Accounts table
@@ -91,6 +92,7 @@ namespace DBapplication
 
             return adminRows > 0;
         }
+
 
 
         public string Login_Member(string username, string password)
