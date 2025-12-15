@@ -14,7 +14,7 @@ namespace DBapplication
         static string DB_Connection_String = @"Data Source=.;Initial Catalog=tickect;Integrated Security=True;TrustServerCertificate=True";
 
         SqlConnection myConnection;
-        //tetsts
+        
         public DBManager()
         {
             myConnection = new SqlConnection(DB_Connection_String);
