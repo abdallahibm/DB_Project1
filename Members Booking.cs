@@ -21,5 +21,15 @@ namespace Project
         {
 
         }
+
+        private void Members_Booking_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        public void getusername(string user)
+        {
+
+        }
     }
 }

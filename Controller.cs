@@ -24,6 +24,7 @@ namespace DBapplication
              //test changes;
         }
 
+<<<<<<< Updated upstream
 
 
         public string ValidateAdminLogin(string username, string password)
@@ -93,6 +94,91 @@ namespace DBapplication
             return adminRows > 0;
         }
 
+=======
+        public string Login_Member(string username, string password)
+        {
+            string query = "SELECT M.SSN " +
+                           "FROM Members M, Accounts A " +
+                           "WHERE M.Username = A.Username " +
+                           "AND A.Username = '" + username + "' " +
+                           "AND A.Password = '" + password + "';";
+
+            object result = dbMan.ExecuteScalar(query);
+
+            if (result == null)
+                return null;
+            else
+                return result.ToString();
+        }
+
+
+
+        public int Insert_New_Member(string fName, string lName, string date, string gender,
+                                     string ssn, string email, string phone, string nationality,
+                                     string username, string password)
+        {
+
+            string accountQuery = "INSERT INTO Accounts (Username, Password) " +
+                                  "VALUES ('" + username + "', '" + password + "');";
+
+            int result1 = dbMan.ExecuteNonQuery(accountQuery);
+
+            if (result1 == 0) return 0; 
+
+            string memberQuery = "INSERT INTO Members " +
+                                 "(SSN, First_Name, Last_Name, Email, Phone_Number, Gender, Date_Of_Birth, Nationality, Username) " +
+                                 "VALUES ('" + ssn + "', '" + fName + "', '" + lName + "', '" + email + "', '" +
+                                 phone + "', '" + gender + "', '" + date + "', '" + nationality + "', '" + username + "');";
+            return dbMan.ExecuteNonQuery(memberQuery);
+        }
+
+        public bool checkuser(string username)
+        {
+           
+            string query = "SELECT COUNT(*) FROM Accounts WHERE Username = '" + username + "';";
+            object result = dbMan.ExecuteScalar(query);
+            int count = Convert.ToInt32(result);
+            if(count>0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool Checkemail(string email)
+        {
+            string query = "SELECT COUNT(*) FROM Members WHERE Email = '" + email + "';";
+
+            object result = dbMan.ExecuteScalar(query);
+            int count = Convert.ToInt32(result);
+
+            if (count > 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool checkssn(string ssn)
+        {
+            string query= "SELECT COUNT(*) FROM Members WHERE SSN = '" + ssn + "';";
+            object result = dbMan.ExecuteScalar(query);
+            int count = Convert.ToInt32(result);
+            if (count > 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+>>>>>>> Stashed changes
 
     }
 

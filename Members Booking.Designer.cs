@@ -347,9 +347,10 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Members_Booking";
             this.Text = "Members Booking Form";
+            this.Load += new System.EventHandler(this.Members_Booking_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
