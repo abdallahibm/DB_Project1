@@ -121,7 +121,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             this.Margin = new System.Windows.Forms.Padding(2);
+=======
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+>>>>>>> Stashed changes
 =======
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 >>>>>>> Stashed changes
