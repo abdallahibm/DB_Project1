@@ -26,6 +26,7 @@ namespace DBapplication
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
         public string ValidateAdminLogin(string username, string password)
@@ -96,6 +97,8 @@ namespace DBapplication
         }
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         public string Login_Member(string username, string password)
@@ -182,6 +185,9 @@ namespace DBapplication
             }
         }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

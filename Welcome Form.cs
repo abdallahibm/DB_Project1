@@ -34,7 +34,21 @@ namespace Project
             this.Hide();
         }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+
+        private void Sign_Up_Button_Click(object sender, EventArgs e)
+        {
+            Members_Sign_Up_form sign = new Members_Sign_Up_form();
+            this.Hide();
+            sign.ShowDialog();
+            this.Show();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+>>>>>>> Stashed changes
 
         private void Sign_Up_Button_Click(object sender, EventArgs e)
         {
