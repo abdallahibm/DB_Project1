@@ -68,6 +68,32 @@ namespace DBapplication
             return "SUCCESS";
         }
 
+
+        public bool AddNewAdmin(string firstName, string lastName, string username, string password)
+        {
+            // 1. Check if username already exists
+            string checkUserQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{username}'";
+            int existingUser = Convert.ToInt32(dbMan.ExecuteScalar(checkUserQuery));
+
+            if (existingUser > 0)
+            {
+                return false;
+            }
+
+            // 2. Insert into Accounts table
+            string insertAccountQuery = $"INSERT INTO Accounts (Username, Password) VALUES ('{username}', '{password}')";
+            int accountRows = dbMan.ExecuteNonQuery(insertAccountQuery);
+
+            if (accountRows == 0) return false;
+
+            // 3. Insert into Administrators table
+            string insertAdminQuery = $"INSERT INTO Administrators (First_Name, Last_Name, Username) VALUES ('{firstName}', '{lastName}', '{username}')";
+            int adminRows = dbMan.ExecuteNonQuery(insertAdminQuery);
+
+            return adminRows > 0;
+        }
+
+
     }
 
 }
