@@ -24,10 +24,6 @@ namespace DBapplication
              //test changes;
         }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
 
         public string ValidateAdminLogin(string username, string password)
         {
@@ -96,11 +92,7 @@ namespace DBapplication
             return adminRows > 0;
         }
 
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
         public string Login_Member(string username, string password)
         {
             string query = "SELECT M.SSN " +
@@ -184,13 +176,7 @@ namespace DBapplication
                 return false;
             }
         }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
 
     }
 
