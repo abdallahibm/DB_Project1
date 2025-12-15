@@ -24,8 +24,6 @@ namespace DBapplication
              //test changes;
         }
 
-
-
         public string ValidateAdminLogin(string username, string password)
         {
             // First check if username exists in Accounts table
