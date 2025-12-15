@@ -90,6 +90,7 @@
             this.Admin_Login_Button.TabIndex = 4;
             this.Admin_Login_Button.Text = "Login as an Administrator";
             this.Admin_Login_Button.UseVisualStyleBackColor = true;
+            this.Admin_Login_Button.Click += new System.EventHandler(this.Admin_Login_Button_Click);
             // 
             // Ushers_Login_Button
             // 
@@ -112,7 +113,7 @@
             this.Controls.Add(this.Sign_Up_Button);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Welcome Form";
             this.ResumeLayout(false);

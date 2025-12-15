@@ -31,5 +31,11 @@ namespace Project
         {
 
         }
+
+        private void Admin_Login_Button_Click(object sender, EventArgs e)
+        {
+            Form2 f2 = new Form2();
+            f2.Show();
+        }
     }
 }
