@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DBapplication;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,8 @@ namespace Project
         public Form3()
         {
             InitializeComponent();
+            Controller controllerObj = new Controller();
+            controllerObj.LoadEventComboBoxInAdmin(comboBox2);
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -48,6 +51,11 @@ namespace Project
         }
 
         private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
         {
 
         }

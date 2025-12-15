@@ -91,6 +91,38 @@ namespace DBapplication
             return adminRows > 0;
         }
 
+        public void LoadEventComboBoxInAdmin(ComboBox comboBoxEventNames)
+        {
+            // Create DBManager directly
+            DBManager dbMan = new DBManager();
+
+            // Query to get event names
+            string query = "SELECT Name FROM Events ORDER BY Name";
+
+            DataTable events = dbMan.ExecuteReader(query);
+
+            // Clear existing items
+            comboBoxEventNames.Items.Clear();
+
+            if (events != null && events.Rows.Count > 0)
+            {
+                // Add each event name to combobox
+                foreach (DataRow row in events.Rows)
+                {
+                    string eventName = row["Name"].ToString();
+                    comboBoxEventNames.Items.Add(eventName);
+                }
+
+                // Select first item
+                comboBoxEventNames.SelectedIndex = 0;
+            }
+            else
+            {
+                comboBoxEventNames.Items.Add("No events found");
+                comboBoxEventNames.SelectedIndex = 0;
+            }
+        }
+
 
 
         public string Login_Member(string username, string password)
