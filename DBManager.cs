@@ -9,6 +9,7 @@ using System.Windows.Forms;
 namespace DBapplication
 {
     public class DBManager
+
     {
 
         static string DB_Connection_String = @"Data Source=.;Initial Catalog=tickect;Integrated Security=True;TrustServerCertificate=True";
@@ -19,6 +20,7 @@ namespace DBapplication
         {
             myConnection = new SqlConnection(DB_Connection_String);
             try
+
             {
                 myConnection.Open(); //Open a connection with the DB
 
