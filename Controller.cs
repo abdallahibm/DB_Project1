@@ -145,17 +145,17 @@ namespace DBapplication
                 return "CANNOT_SUSPEND_ADMIN";
             }
 
-            // Check if already suspended
-            string checkSuspendedQuery = $"SELECT COUNT(*) FROM Suspend WHERE Username = '{usernameToSuspend}'";
-            int alreadySuspended = Convert.ToInt32(dbMan.ExecuteScalar(checkSuspendedQuery));
+            // Check if already suspended - USING THE Status COLUMN
+            string checkSuspendedQuery = $"SELECT Status FROM Accounts WHERE Username = '{usernameToSuspend}'";
+            object statusResult = dbMan.ExecuteScalar(checkSuspendedQuery);
 
-            if (alreadySuspended > 0)
+            if (statusResult != null && statusResult.ToString() == "Suspended")
             {
                 return "ALREADY_SUSPENDED";
             }
 
-            // Try to suspend
-            string suspendQuery = $"INSERT INTO Suspend (Admin_ID, Username) VALUES ({adminID}, '{usernameToSuspend}')";
+            // Try to suspend - UPDATE Status column instead of inserting into Suspend table
+            string suspendQuery = $"UPDATE Accounts SET Status = 'Suspended' WHERE Username = '{usernameToSuspend}'";
             int rowsAffected = dbMan.ExecuteNonQuery(suspendQuery);
 
             return rowsAffected > 0 ? "SUCCESS" : "ERROR";
@@ -164,17 +164,17 @@ namespace DBapplication
 
         public bool UnsuspendAccount(string usernameToUnsuspend)
         {
-            // Check if actually suspended
-            string checkQuery = $"SELECT COUNT(*) FROM Suspend WHERE Username = '{usernameToUnsuspend}'";
-            int isSuspended = Convert.ToInt32(dbMan.ExecuteScalar(checkQuery));
+            // Check if actually suspended - USING THE Status COLUMN
+            string checkQuery = $"SELECT Status FROM Accounts WHERE Username = '{usernameToUnsuspend}'";
+            object statusResult = dbMan.ExecuteScalar(checkQuery);
 
-            if (isSuspended == 0)
+            if (statusResult == null || statusResult.ToString() != "Suspended")
             {
-                return false; // Not suspended
+                return false; // Not suspended or user doesn't exist
             }
 
-            // Remove from Suspend table
-            string unsuspendQuery = $"DELETE FROM Suspend WHERE Username = '{usernameToUnsuspend}'";
+            // Remove suspension - UPDATE Status column to 'Active'
+            string unsuspendQuery = $"UPDATE Accounts SET Status = 'Active' WHERE Username = '{usernameToUnsuspend}'";
             return dbMan.ExecuteNonQuery(unsuspendQuery) > 0;
         }
 
@@ -244,13 +244,30 @@ namespace DBapplication
                     {
                         int eventID = Convert.ToInt32(row["Event_ID"]);
 
-                        // Delete Event_Inventory for this event
-                        string deleteInventoryQuery = $"DELETE FROM Event_Inventory WHERE Event_ID = {eventID}";
-                        dbMan.ExecuteNonQuery(deleteInventoryQuery);
+                        // FIRST: Get all Create_Event entries for this event (need Agency_ID and Category)
+                        string getCreateEventQuery = $"SELECT Agency_ID, Category FROM Create_Event WHERE Event_ID = {eventID}";
+                        DataTable createEvents = dbMan.ExecuteReader(getCreateEventQuery);
+
+                        if (createEvents != null)
+                        {
+                            foreach (DataRow ceRow in createEvents.Rows)
+                            {
+                                int ceAgencyID = Convert.ToInt32(ceRow["Agency_ID"]);
+                                string category = ceRow["Category"].ToString();
+
+                                // Delete Event_Inventory for this specific Create_Event entry
+                                string deleteInventoryQuery = $"DELETE FROM Event_Inventory WHERE Event_ID = {eventID} AND Agency_ID = {ceAgencyID} AND Category = '{category}'";
+                                dbMan.ExecuteNonQuery(deleteInventoryQuery);
+                            }
+                        }
 
                         // Delete Create_Event for this event
                         string deleteCreateEventQuery = $"DELETE FROM Create_Event WHERE Event_ID = {eventID}";
                         dbMan.ExecuteNonQuery(deleteCreateEventQuery);
+
+                        // Delete Allow_Entry for this event
+                        string deleteAllowEntryQuery = $"DELETE FROM Allow_Entry WHERE Event_ID = {eventID}";
+                        dbMan.ExecuteNonQuery(deleteAllowEntryQuery);
 
                         // Get Tickets for this event
                         string getTicketsQuery = $"SELECT Ticket_ID FROM Tickets WHERE Event_ID = {eventID}";
@@ -275,10 +292,6 @@ namespace DBapplication
                         // Delete Ratings for this event
                         string deleteRatingsQuery = $"DELETE FROM Rating WHERE Event_ID = {eventID}";
                         dbMan.ExecuteNonQuery(deleteRatingsQuery);
-
-                        // Delete Allow_Entry for this event
-                        string deleteAllowEntryQuery = $"DELETE FROM Allow_Entry WHERE Event_ID = {eventID}";
-                        dbMan.ExecuteNonQuery(deleteAllowEntryQuery);
                     }
 
                     // Delete Events by this Agency
@@ -311,9 +324,9 @@ namespace DBapplication
                 dbMan.ExecuteNonQuery(deleteUsherQuery);
             }
 
-            // 4. Remove from Suspend table (if suspended)
-            string deleteSuspendQuery = $"DELETE FROM Suspend WHERE Username = '{usernameToDelete}'";
-            dbMan.ExecuteNonQuery(deleteSuspendQuery);
+            // 4. REMOVE SUSPENSION STATUS (NOT Suspend table) - Update Status to 'Active' before deletion
+            string updateStatusQuery = $"UPDATE Accounts SET Status = 'Active' WHERE Username = '{usernameToDelete}'";
+            dbMan.ExecuteNonQuery(updateStatusQuery);
 
             // 5. Finally delete from Accounts table
             string deleteAccountQuery = $"DELETE FROM Accounts WHERE Username = '{usernameToDelete}'";
