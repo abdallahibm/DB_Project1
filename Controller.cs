@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
-using System.Windows.Forms;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DBapplication
 {
@@ -91,37 +92,7 @@ namespace DBapplication
             return adminRows > 0;
         }
 
-        public void LoadEventComboBoxInAdmin(ComboBox comboBoxEventNames)
-        {
-            // Create DBManager directly
-            DBManager dbMan = new DBManager();
-
-            // Query to get event names
-            string query = "SELECT Name FROM Events ORDER BY Name";
-
-            DataTable events = dbMan.ExecuteReader(query);
-
-            // Clear existing items
-            comboBoxEventNames.Items.Clear();
-
-            if (events != null && events.Rows.Count > 0)
-            {
-                // Add each event name to combobox
-                foreach (DataRow row in events.Rows)
-                {
-                    string eventName = row["Name"].ToString();
-                    comboBoxEventNames.Items.Add(eventName);
-                }
-
-                // Select first item
-                comboBoxEventNames.SelectedIndex = 0;
-            }
-            else
-            {
-                comboBoxEventNames.Items.Add("No events found");
-                comboBoxEventNames.SelectedIndex = 0;
-            }
-        }
+        
 
         public string SuspendAccount(int adminID, string usernameToSuspend)
         {
@@ -335,6 +306,83 @@ namespace DBapplication
             return rowsAffected > 0;
         }
 
+        public string GetAgencyForEvent(string eventName)
+        {
+            string query = "SELECT OA.Name FROM Events E, Organizing_Agency OA WHERE E.Agency_ID = OA.Agency_ID AND E.Name = '" + eventName + "'";
+
+            object result = dbMan.ExecuteScalar(query);
+            return result != null ? result.ToString() : "Not Found";
+        }
+
+        public DataTable GetAvailableUshers()
+        {
+            // Specify which table's Username to use (U.Username from Ushers table)
+            string query = "SELECT U.Username FROM Ushers U, Accounts A WHERE U.Username = A.Username AND A.Status = 'Active' ORDER BY U.Username";
+
+            return dbMan.ExecuteReader(query);
+        }
+
+        public int GetEventID(string eventName)
+        {
+            string query = "SELECT Event_ID FROM Events WHERE Name = '" + eventName + "'";
+            object result = dbMan.ExecuteScalar(query);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToInt32(result);
+            }
+            return -1;
+        }
+
+        public bool ApproveEvent(int eventID, int adminID)
+        {
+            string query = "UPDATE Create_Event SET Status = 'Approved' WHERE Event_ID = " + eventID;
+            return dbMan.ExecuteNonQuery(query) > 0;
+        }
+
+        public bool DeclineEvent(int eventID, int adminID)
+        {
+            string query = "UPDATE Create_Event SET Status = 'Declined' WHERE Event_ID = " + eventID;
+            return dbMan.ExecuteNonQuery(query) > 0;
+        }
+
+        public bool AssignUsherToEvent(string usherUsername, int eventID)
+        {
+            // Get usher SSN from username
+            string getSSNQuery = "SELECT SSN FROM Ushers WHERE Username = '" + usherUsername + "'";
+            object ssnResult = dbMan.ExecuteScalar(getSSNQuery);
+
+            if (ssnResult == null)
+            {
+                return false; // Usher not found
+            }
+
+            string usherSSN = ssnResult.ToString();
+
+            // Check if already assigned
+            string checkQuery = "SELECT COUNT(*) FROM Allow_Entry WHERE Usher_SSN = '" + usherSSN + "' AND Event_ID = " + eventID;
+            int alreadyAssigned = Convert.ToInt32(dbMan.ExecuteScalar(checkQuery));
+
+            if (alreadyAssigned > 0)
+            {
+                return false; // Already assigned
+            }
+
+            string insertQuery = "INSERT INTO Allow_Entry (Usher_SSN, Event_ID) VALUES ('" + usherSSN + "', " + eventID + ")";
+            return dbMan.ExecuteNonQuery(insertQuery) > 0;
+        }
+
+        // 7. Get Event Status from Create_Event table
+        public string GetEventStatus(string eventName)
+        {
+            string query = "SELECT TOP 1 CE.Status FROM Create_Event CE, Events E WHERE CE.Event_ID = E.Event_ID AND E.Name = '" + eventName + "'";
+
+            object result = dbMan.ExecuteScalar(query);
+            return result != null ? result.ToString() : "Unknown";
+        }
+
+        
+
 
         public int GetAdminID(string username)
         {
@@ -347,6 +395,8 @@ namespace DBapplication
             }
             return -1; // Return -1 if not found (error)
         }
+
+    
 
 
 
