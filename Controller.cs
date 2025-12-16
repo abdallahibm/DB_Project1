@@ -178,6 +178,151 @@ namespace DBapplication
             return dbMan.ExecuteNonQuery(unsuspendQuery) > 0;
         }
 
+        public bool DeleteAccount(string usernameToDelete)
+        {
+            // 1. Check if account exists
+            string checkQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{usernameToDelete}'";
+            int exists = Convert.ToInt32(dbMan.ExecuteScalar(checkQuery));
+
+            if (exists == 0)
+            {
+                return false; // User doesn't exist
+            }
+
+            // 2. Check if user is an Admin (CANNOT delete another admin)
+            string checkAdminQuery = $"SELECT COUNT(*) FROM Administrators WHERE Username = '{usernameToDelete}'";
+            int isAdmin = Convert.ToInt32(dbMan.ExecuteScalar(checkAdminQuery));
+
+            if (isAdmin > 0)
+            {
+                return false; // Cannot delete another admin
+            }
+
+            // 3. Check what type of user this is
+            string checkMemberQuery = $"SELECT COUNT(*) FROM Members WHERE Username = '{usernameToDelete}'";
+            string checkAgencyQuery = $"SELECT COUNT(*) FROM Organizing_Agency WHERE Username = '{usernameToDelete}'";
+            string checkUsherQuery = $"SELECT COUNT(*) FROM Ushers WHERE Username = '{usernameToDelete}'";
+
+            int isMember = Convert.ToInt32(dbMan.ExecuteScalar(checkMemberQuery));
+            int isAgency = Convert.ToInt32(dbMan.ExecuteScalar(checkAgencyQuery));
+            int isUsher = Convert.ToInt32(dbMan.ExecuteScalar(checkUsherQuery));
+
+            // ========== DELETE MEMBER ==========
+            if (isMember > 0)
+            {
+                // Get Member's SSN
+                string getSSNQuery = $"SELECT SSN FROM Members WHERE Username = '{usernameToDelete}'";
+                string ssn = dbMan.ExecuteScalar(getSSNQuery).ToString();
+
+                // Delete Member's Ratings
+                string deleteRatingsQuery = $"DELETE FROM Rating WHERE SSN = '{ssn}'";
+                dbMan.ExecuteNonQuery(deleteRatingsQuery);
+
+                // Delete Member's Bookings
+                string deleteBookingsQuery = $"DELETE FROM Book WHERE SSN = '{ssn}'";
+                dbMan.ExecuteNonQuery(deleteBookingsQuery);
+
+                // Delete Member
+                string deleteMemberQuery = $"DELETE FROM Members WHERE Username = '{usernameToDelete}'";
+                dbMan.ExecuteNonQuery(deleteMemberQuery);
+            }
+
+            // ========== DELETE AGENCY ==========
+            else if (isAgency > 0)
+            {
+                // Get Agency_ID
+                string getAgencyIDQuery = $"SELECT Agency_ID FROM Organizing_Agency WHERE Username = '{usernameToDelete}'";
+                int agencyID = Convert.ToInt32(dbMan.ExecuteScalar(getAgencyIDQuery));
+
+                // Get all Events by this Agency
+                string getEventsQuery = $"SELECT Event_ID FROM Events WHERE Agency_ID = {agencyID}";
+                DataTable events = dbMan.ExecuteReader(getEventsQuery);
+
+                if (events != null)
+                {
+                    foreach (DataRow row in events.Rows)
+                    {
+                        int eventID = Convert.ToInt32(row["Event_ID"]);
+
+                        // Delete Event_Inventory for this event
+                        string deleteInventoryQuery = $"DELETE FROM Event_Inventory WHERE Event_ID = {eventID}";
+                        dbMan.ExecuteNonQuery(deleteInventoryQuery);
+
+                        // Delete Create_Event for this event
+                        string deleteCreateEventQuery = $"DELETE FROM Create_Event WHERE Event_ID = {eventID}";
+                        dbMan.ExecuteNonQuery(deleteCreateEventQuery);
+
+                        // Get Tickets for this event
+                        string getTicketsQuery = $"SELECT Ticket_ID FROM Tickets WHERE Event_ID = {eventID}";
+                        DataTable tickets = dbMan.ExecuteReader(getTicketsQuery);
+
+                        if (tickets != null)
+                        {
+                            foreach (DataRow ticketRow in tickets.Rows)
+                            {
+                                int ticketID = Convert.ToInt32(ticketRow["Ticket_ID"]);
+
+                                // Delete Bookings for this ticket
+                                string deleteBookingsQuery = $"DELETE FROM Book WHERE Ticket_ID = {ticketID}";
+                                dbMan.ExecuteNonQuery(deleteBookingsQuery);
+                            }
+
+                            // Delete Tickets for this event
+                            string deleteTicketsQuery = $"DELETE FROM Tickets WHERE Event_ID = {eventID}";
+                            dbMan.ExecuteNonQuery(deleteTicketsQuery);
+                        }
+
+                        // Delete Ratings for this event
+                        string deleteRatingsQuery = $"DELETE FROM Rating WHERE Event_ID = {eventID}";
+                        dbMan.ExecuteNonQuery(deleteRatingsQuery);
+
+                        // Delete Allow_Entry for this event
+                        string deleteAllowEntryQuery = $"DELETE FROM Allow_Entry WHERE Event_ID = {eventID}";
+                        dbMan.ExecuteNonQuery(deleteAllowEntryQuery);
+                    }
+
+                    // Delete Events by this Agency
+                    string deleteEventsQuery = $"DELETE FROM Events WHERE Agency_ID = {agencyID}";
+                    dbMan.ExecuteNonQuery(deleteEventsQuery);
+                }
+
+                // Delete Agency
+                string deleteAgencyQuery = $"DELETE FROM Organizing_Agency WHERE Username = '{usernameToDelete}'";
+                dbMan.ExecuteNonQuery(deleteAgencyQuery);
+            }
+
+            // ========== DELETE USHER ==========
+            else if (isUsher > 0)
+            {
+                // Get Usher's SSN
+                string getSSNQuery = $"SELECT SSN FROM Ushers WHERE Username = '{usernameToDelete}'";
+                string ssn = dbMan.ExecuteScalar(getSSNQuery).ToString();
+
+                // Delete Usher's Phones
+                string deletePhonesQuery = $"DELETE FROM Usher_Phones WHERE SSN = '{ssn}'";
+                dbMan.ExecuteNonQuery(deletePhonesQuery);
+
+                // Delete Usher from Allow_Entry
+                string deleteAllowEntryQuery = $"DELETE FROM Allow_Entry WHERE Usher_SSN = '{ssn}'";
+                dbMan.ExecuteNonQuery(deleteAllowEntryQuery);
+
+                // Delete Usher
+                string deleteUsherQuery = $"DELETE FROM Ushers WHERE Username = '{usernameToDelete}'";
+                dbMan.ExecuteNonQuery(deleteUsherQuery);
+            }
+
+            // 4. Remove from Suspend table (if suspended)
+            string deleteSuspendQuery = $"DELETE FROM Suspend WHERE Username = '{usernameToDelete}'";
+            dbMan.ExecuteNonQuery(deleteSuspendQuery);
+
+            // 5. Finally delete from Accounts table
+            string deleteAccountQuery = $"DELETE FROM Accounts WHERE Username = '{usernameToDelete}'";
+            int rowsAffected = dbMan.ExecuteNonQuery(deleteAccountQuery);
+
+            return rowsAffected > 0;
+        }
+
+
         public int GetAdminID(string username)
         {
             string query = $"SELECT Admin_ID FROM Administrators WHERE Username = '{username}'";

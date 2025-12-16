@@ -128,6 +128,46 @@ namespace Project
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Controller controllerObj = new Controller();
+            string username = textBox1.Text;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Please enter a username to delete.");
+                return;
+            }
+
+            DialogResult confirm = MessageBox.Show(
+       $"⚠️ WARNING: This will PERMANENTLY delete account '{username}'.\n\n" +
+       "All user data will be lost forever.\n" +
+       "This action cannot be undone!\n\n" +
+       "Are you absolutely sure?",
+       "CONFIRM PERMANENT DELETE",
+       MessageBoxButtons.YesNo,
+       MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes)
+            {
+                return; // User cancelled
+            }
+
+            bool success = controllerObj.DeleteAccount(username);
+
+            // Show result
+            if (success)
+            {
+                MessageBox.Show($"✅ Account '{username}' has been permanently deleted.",
+                               "Deletion Successful");
+                textBox1.Clear();
+            }
+            else
+            {
+                MessageBox.Show($"❌ Failed to delete '{username}'.\n" +
+                               "User may not exist or has dependencies or is as Admin.",
+                               "Deletion Failed");
+            }
 
 
 
@@ -135,6 +175,11 @@ namespace Project
 
 
 
+
+
+
+
+        }
     }
     
 }
