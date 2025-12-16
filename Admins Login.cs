@@ -53,7 +53,9 @@ namespace Project
                     // Login successful
                     MessageBox.Show("Login successful!");
 
+                    int Admin_ID = controller.GetAdminID(username);
                     Form3 f3 = new Form3();
+                    f3.AdminID = Admin_ID;
                     f3.Show();
                     
                     

@@ -123,6 +123,73 @@ namespace DBapplication
             }
         }
 
+        public string SuspendAccount(int adminID, string usernameToSuspend)
+        {
+            // Return different strings for different cases
+
+            // Check if user exists
+            string checkUserQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{usernameToSuspend}'";
+            int userExists = Convert.ToInt32(dbMan.ExecuteScalar(checkUserQuery));
+
+            if (userExists == 0)
+            {
+                return "USER_NOT_FOUND";
+            }
+
+            // Check if user is an Admin
+            string checkAdminQuery = $"SELECT COUNT(*) FROM Administrators WHERE Username = '{usernameToSuspend}'";
+            int isAdmin = Convert.ToInt32(dbMan.ExecuteScalar(checkAdminQuery));
+
+            if (isAdmin > 0)
+            {
+                return "CANNOT_SUSPEND_ADMIN";
+            }
+
+            // Check if already suspended
+            string checkSuspendedQuery = $"SELECT COUNT(*) FROM Suspend WHERE Username = '{usernameToSuspend}'";
+            int alreadySuspended = Convert.ToInt32(dbMan.ExecuteScalar(checkSuspendedQuery));
+
+            if (alreadySuspended > 0)
+            {
+                return "ALREADY_SUSPENDED";
+            }
+
+            // Try to suspend
+            string suspendQuery = $"INSERT INTO Suspend (Admin_ID, Username) VALUES ({adminID}, '{usernameToSuspend}')";
+            int rowsAffected = dbMan.ExecuteNonQuery(suspendQuery);
+
+            return rowsAffected > 0 ? "SUCCESS" : "ERROR";
+        }
+
+
+        public bool UnsuspendAccount(string usernameToUnsuspend)
+        {
+            // Check if actually suspended
+            string checkQuery = $"SELECT COUNT(*) FROM Suspend WHERE Username = '{usernameToUnsuspend}'";
+            int isSuspended = Convert.ToInt32(dbMan.ExecuteScalar(checkQuery));
+
+            if (isSuspended == 0)
+            {
+                return false; // Not suspended
+            }
+
+            // Remove from Suspend table
+            string unsuspendQuery = $"DELETE FROM Suspend WHERE Username = '{usernameToUnsuspend}'";
+            return dbMan.ExecuteNonQuery(unsuspendQuery) > 0;
+        }
+
+        public int GetAdminID(string username)
+        {
+            string query = $"SELECT Admin_ID FROM Administrators WHERE Username = '{username}'";
+            object result = dbMan.ExecuteScalar(query);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToInt32(result);
+            }
+            return -1; // Return -1 if not found (error)
+        }
+
 
 
         public string Login_Member(string username, string password)

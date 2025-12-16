@@ -13,11 +13,19 @@ namespace Project
 {
     public partial class Form3 : Form
     {
+        public int currentAdminID;
+
         public Form3()
         {
             InitializeComponent();
             Controller controllerObj = new Controller();
             controllerObj.LoadEventComboBoxInAdmin(comboBox2);
+        }
+
+        public int AdminID
+        {
+            get { return currentAdminID; }
+            set { currentAdminID = value; }
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -57,7 +65,76 @@ namespace Project
 
         private void button8_Click(object sender, EventArgs e)
         {
+            string username = textBox1.Text;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Please enter a username to unsuspend.");
+                return;
+            }
+
+            Controller controllerObj = new Controller();
+            bool success = controllerObj.UnsuspendAccount(username);
+
+            // 4. Show result
+            if (success)
+            {
+                MessageBox.Show($"Account '{username}' unsuspended successfully.");
+                textBox1.Clear(); // Clear the textbox
+                textBox1.Focus(); // Put cursor back for next entry
+            }
+            else
+            {
+                MessageBox.Show($"Failed to unsuspend '{username}'. User may not be suspended.");
+            }
+
+
+
+
 
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Controller controllerObj = new Controller();
+            string username = textBox1.Text;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Please enter a username to suspend.");
+                return;
+            }
+
+
+            string result = controllerObj.SuspendAccount(currentAdminID, username);
+
+            switch (result)
+            {
+                case "SUCCESS":
+                    MessageBox.Show($"Suspended: {username}");
+                    break;
+                case "USER_NOT_FOUND":
+                    MessageBox.Show($"User '{username}' does not exist.");
+                    break;
+                case "CANNOT_SUSPEND_ADMIN":
+                    MessageBox.Show($"Cannot suspend another administrator ({username}).");
+                    break;
+                case "ALREADY_SUSPENDED":
+                    MessageBox.Show($"User '{username}' is already suspended.");
+                    break;
+                default:
+                    MessageBox.Show("Suspension failed.");
+                    break;
+            }
+        }
+
+
+
+
+
+
+
+
     }
+    
 }
