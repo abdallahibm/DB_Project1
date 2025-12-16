@@ -92,7 +92,7 @@ namespace DBapplication
             return adminRows > 0;
         }
 
-        
+
 
         public string SuspendAccount(int adminID, string usernameToSuspend)
         {
@@ -116,7 +116,7 @@ namespace DBapplication
                 return "CANNOT_SUSPEND_ADMIN";
             }
 
-            // Check if already suspended - USING THE Status COLUMN
+            // Check if already suspended
             string checkSuspendedQuery = $"SELECT Status FROM Accounts WHERE Username = '{usernameToSuspend}'";
             object statusResult = dbMan.ExecuteScalar(checkSuspendedQuery);
 
@@ -125,8 +125,8 @@ namespace DBapplication
                 return "ALREADY_SUSPENDED";
             }
 
-            // Try to suspend - UPDATE Status column instead of inserting into Suspend table
-            string suspendQuery = $"UPDATE Accounts SET Status = 'Suspended' WHERE Username = '{usernameToSuspend}'";
+            // Try to suspend - UPDATE Status AND Suspending_Admin_ID
+            string suspendQuery = $"UPDATE Accounts SET Status = 'Suspended', Suspending_Admin_ID = {adminID} WHERE Username = '{usernameToSuspend}'";
             int rowsAffected = dbMan.ExecuteNonQuery(suspendQuery);
 
             return rowsAffected > 0 ? "SUCCESS" : "ERROR";
@@ -135,7 +135,7 @@ namespace DBapplication
 
         public bool UnsuspendAccount(string usernameToUnsuspend)
         {
-            // Check if actually suspended - USING THE Status COLUMN
+            // Check if actually suspended
             string checkQuery = $"SELECT Status FROM Accounts WHERE Username = '{usernameToUnsuspend}'";
             object statusResult = dbMan.ExecuteScalar(checkQuery);
 
@@ -144,8 +144,8 @@ namespace DBapplication
                 return false; // Not suspended or user doesn't exist
             }
 
-            // Remove suspension - UPDATE Status column to 'Active'
-            string unsuspendQuery = $"UPDATE Accounts SET Status = 'Active' WHERE Username = '{usernameToUnsuspend}'";
+            // Remove suspension - UPDATE Status AND clear Suspending_Admin_ID
+            string unsuspendQuery = $"UPDATE Accounts SET Status = 'Active', Suspending_Admin_ID = NULL WHERE Username = '{usernameToUnsuspend}'";
             return dbMan.ExecuteNonQuery(unsuspendQuery) > 0;
         }
 
@@ -205,8 +205,8 @@ namespace DBapplication
                 string getAgencyIDQuery = $"SELECT Agency_ID FROM Organizing_Agency WHERE Username = '{usernameToDelete}'";
                 int agencyID = Convert.ToInt32(dbMan.ExecuteScalar(getAgencyIDQuery));
 
-                // Get all Events by this Agency
-                string getEventsQuery = $"SELECT Event_ID FROM Events WHERE Agency_ID = {agencyID}";
+                // Get all Events by this Agency (through Create_Event table)
+                string getEventsQuery = $"SELECT DISTINCT CE.Event_ID FROM Create_Event CE WHERE CE.Agency_ID = {agencyID}";
                 DataTable events = dbMan.ExecuteReader(getEventsQuery);
 
                 if (events != null)
@@ -215,7 +215,7 @@ namespace DBapplication
                     {
                         int eventID = Convert.ToInt32(row["Event_ID"]);
 
-                        // FIRST: Get all Create_Event entries for this event (need Agency_ID and Category)
+                        // FIRST: Get all Create_Event entries for this event
                         string getCreateEventQuery = $"SELECT Agency_ID, Category FROM Create_Event WHERE Event_ID = {eventID}";
                         DataTable createEvents = dbMan.ExecuteReader(getCreateEventQuery);
 
@@ -265,9 +265,9 @@ namespace DBapplication
                         dbMan.ExecuteNonQuery(deleteRatingsQuery);
                     }
 
-                    // Delete Events by this Agency
-                    string deleteEventsQuery = $"DELETE FROM Events WHERE Agency_ID = {agencyID}";
-                    dbMan.ExecuteNonQuery(deleteEventsQuery);
+                    // Delete Events (if they have no other agencies)
+                    string deleteOrphanEventsQuery = $"DELETE FROM Events WHERE Event_ID NOT IN (SELECT Event_ID FROM Create_Event)";
+                    dbMan.ExecuteNonQuery(deleteOrphanEventsQuery);
                 }
 
                 // Delete Agency
@@ -295,8 +295,8 @@ namespace DBapplication
                 dbMan.ExecuteNonQuery(deleteUsherQuery);
             }
 
-            // 4. REMOVE SUSPENSION STATUS (NOT Suspend table) - Update Status to 'Active' before deletion
-            string updateStatusQuery = $"UPDATE Accounts SET Status = 'Active' WHERE Username = '{usernameToDelete}'";
+            // 4. NEW: Clear Suspension status and Suspending_Admin_ID before deletion
+            string updateStatusQuery = $"UPDATE Accounts SET Status = 'Active', Suspending_Admin_ID = NULL WHERE Username = '{usernameToDelete}'";
             dbMan.ExecuteNonQuery(updateStatusQuery);
 
             // 5. Finally delete from Accounts table
@@ -308,7 +308,8 @@ namespace DBapplication
 
         public string GetAgencyForEvent(string eventName)
         {
-            string query = "SELECT OA.Name FROM Events E, Organizing_Agency OA WHERE E.Agency_ID = OA.Agency_ID AND E.Name = '" + eventName + "'";
+            // NEW: Get Agency from Create_Event table (Events table no longer has Agency_ID)
+            string query = $"SELECT TOP 1 OA.Name FROM Events E, Create_Event CE, Organizing_Agency OA WHERE E.Event_ID = CE.Event_ID AND CE.Agency_ID = OA.Agency_ID AND E.Name = '" + eventName + "'";
 
             object result = dbMan.ExecuteScalar(query);
             return result != null ? result.ToString() : "Not Found";
@@ -368,7 +369,21 @@ namespace DBapplication
                 return false; // Already assigned
             }
 
-            string insertQuery = "INSERT INTO Allow_Entry (Usher_SSN, Event_ID) VALUES ('" + usherSSN + "', " + eventID + ")";
+            // Get the event date/time from Create_Event table
+            string getEventDateTimeQuery = "SELECT TOP 1 Date_And_Time FROM Create_Event WHERE Event_ID = " + eventID;
+            object eventDateTimeResult = dbMan.ExecuteScalar(getEventDateTimeQuery);
+
+            if (eventDateTimeResult == null)
+            {
+                return false; // Event not found in Create_Event
+            }
+
+            DateTime eventDateTime = Convert.ToDateTime(eventDateTimeResult);
+            string sqlDateTime = eventDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Insert with the EVENT date/time
+            string insertQuery = "INSERT INTO Allow_Entry (Usher_SSN, Event_ID, Entry_DateTime) VALUES ('" + usherSSN + "', " + eventID + ", '" + sqlDateTime + "')";
+
             return dbMan.ExecuteNonQuery(insertQuery) > 0;
         }
 
