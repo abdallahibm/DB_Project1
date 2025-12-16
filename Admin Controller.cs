@@ -30,6 +30,8 @@ namespace Project
 
         private void button5_Click(object sender, EventArgs e)
         {
+            Agency_Sign_Up form = new Agency_Sign_Up();
+            form.Show();
 
         }
 
@@ -178,6 +180,20 @@ namespace Project
 
 
 
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Admin_Sign_Up form = new Admin_Sign_Up();
+            form.Show();
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Form4 form = new Form4();
+            form.Show();
 
         }
     }
