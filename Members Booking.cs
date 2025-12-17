@@ -190,23 +190,17 @@ namespace Project
         private void button2_Click(object sender, EventArgs e)
         {
            
-                // 1. Validation: Check if a booking was actually selected from the popup
-                // We check 'currentEventIDToDelete' which we set in the previous button function
                 if (currentEventIDToDelete == 0 || string.IsNullOrEmpty(currentCategoryToDelete))
                 {
                     MessageBox.Show("Please click 'show bookings', select a row, and try again.");
                     return;
                 }
-
-                // 2. Confirmation Dialog
                 DialogResult result = MessageBox.Show("Are you sure you want to delete this booking? This cannot be undone.",
                                                       "Confirm Delete",
                                                       MessageBoxButtons.YesNo,
                                                       MessageBoxIcon.Warning);
 
-                if (result == DialogResult.No) return; // User clicked No
-
-                // 3. Get the Ticket Count (needed to update inventory)
+                if (result == DialogResult.No) return; 
                 int count = 0;
                 if (!int.TryParse(textBox4.Text, out count))
                 {
@@ -214,19 +208,15 @@ namespace Project
                     return;
                 }
 
-                // 4. Call Controller
                 string msg = controllerObj.DeleteMemberBooking(username, currentEventIDToDelete, currentCategoryToDelete, count);
 
-                // 5. Handle Result
                 if (msg == "Success")
                 {
                     MessageBox.Show("Booking Deleted Successfully. Tickets have been returned to inventory.");
 
-                    // Clear the UI boxes
                     textBox3.Text = "";
                     textBox4.Text = "";
 
-                    // Reset the hidden variables so they can't delete the same thing twice
                     currentEventIDToDelete = 0;
                     currentCategoryToDelete = "";
                 }

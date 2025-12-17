@@ -27,33 +27,19 @@ namespace Project
         {
 
         }
-        private void mybookings_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                // 1. Capture the data from the selected row
-                DataGridViewRow row = mybookings.Rows[e.RowIndex];
-
-                SelectedEventID = Convert.ToInt32(row.Cells["Event_ID"].Value);
-                SelectedCategory = row.Cells["Category"].Value.ToString();
-                SelectedCount = Convert.ToInt32(row.Cells["TicketCount"].Value);
-                SelectedEventName = row.Cells["Name"].Value.ToString(); // Or "EventName" based on query
-
-                this.Close();
-            }
-        }
+       
 
         private void mybookings_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
-                // 1. Capture the data from the selected row
+               
                 DataGridViewRow row = mybookings.Rows[e.RowIndex];
 
                 SelectedEventID = Convert.ToInt32(row.Cells["Event_ID"].Value);
                 SelectedCategory = row.Cells["Category"].Value.ToString();
                 SelectedCount = Convert.ToInt32(row.Cells["TicketCount"].Value);
-                SelectedEventName = row.Cells["Name"].Value.ToString(); // Or "EventName" based on query
+                SelectedEventName = row.Cells["Name"].Value.ToString(); 
 
                 this.Close();
             }
