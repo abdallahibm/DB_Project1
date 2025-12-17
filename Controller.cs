@@ -664,8 +664,8 @@ namespace DBapplication
         public bool issuspended(string user)
         {
 
-            string query = "SELECT Status FROM Members WHERE Username = '" + user + "'";
-
+            string query = "SELECT Status FROM Accounts WHERE Username = '" + user + "'";
+        
             object result = dbMan.ExecuteScalar(query);
             string s = Convert.ToString(result);
             if(s== "Suspended")
