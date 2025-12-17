@@ -44,7 +44,7 @@ namespace Project
             {
                 MessageBox.Show("Administrator added successfully!", "Success");
 
-                // Return to login form
+               
                 Form2 f2 = new Form2();
                 f2.Show();
                 this.Close();

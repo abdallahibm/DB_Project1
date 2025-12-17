@@ -17,10 +17,10 @@ namespace Project
 
         public void LoadEventComboBoxInAdmin(ComboBox comboBoxEventNames)
         {
-            // Create DBManager directly
+            
             DBManager dbMan = new DBManager();
 
-            // Query to get event names
+            
             string query = @"
         SELECT DISTINCT E.Name 
         FROM Events E, Create_Event CE 
@@ -30,19 +30,19 @@ namespace Project
 
             DataTable events = dbMan.ExecuteReader(query);
 
-            // Clear existing items
+            
             comboBoxEventNames.Items.Clear();
 
             if (events != null && events.Rows.Count > 0)
             {
-                // Add each event name to combobox
+                
                 foreach (DataRow row in events.Rows)
                 {
                     string eventName = row["Name"].ToString();
                     comboBoxEventNames.Items.Add(eventName);
                 }
 
-                // Select first item
+                
                 comboBoxEventNames.SelectedIndex = 0;
             }
             else
@@ -80,10 +80,10 @@ namespace Project
 
         public void RefreshAllData()
         {
-            // 1. Refresh pending events list
+            
             LoadEventComboBoxInAdmin(comboBox2);
 
-            // 2. Refresh ushers list
+            
             LoadUshersComboBox(comboBox1);
 
             
@@ -124,7 +124,7 @@ namespace Project
             string selectedEvent = comboBox2.SelectedItem.ToString();
             Controller controllerObj = new Controller();
 
-            // 1. Get Event ID
+          
             int eventID = controllerObj.GetEventID(selectedEvent);
             if (eventID == -1)
             {
@@ -132,12 +132,12 @@ namespace Project
                 return;
             }
 
-            // 2. Approve the event
+            
             bool approved = controllerObj.ApproveEvent(eventID, currentAdminID);
 
             if (approved)
             {
-                // 3. Assign usher if one is selected
+                
                 if (comboBox1.SelectedItem != null && comboBox1.SelectedItem.ToString() != "No ushers available")
                 {
                     string selectedUsher = comboBox1.SelectedItem.ToString();
@@ -157,7 +157,7 @@ namespace Project
                     MessageBox.Show("Event approved successfully! No usher assigned.");
                 }
 
-                // 4. Refresh or clear UI
+                
                 textBox3.Clear();
                 comboBox2.SelectedIndex = -1;
                 comboBox1.SelectedIndex = -1;
@@ -206,12 +206,12 @@ namespace Project
             Controller controllerObj = new Controller();
             bool success = controllerObj.UnsuspendAccount(username);
 
-            // 4. Show result
+            
             if (success)
             {
                 MessageBox.Show($"Account '{username}' unsuspended successfully.");
-                textBox1.Clear(); // Clear the textbox
-                textBox1.Focus(); // Put cursor back for next entry
+                textBox1.Clear(); 
+                textBox1.Focus(); 
             }
             else
             {
@@ -280,12 +280,12 @@ namespace Project
 
             if (confirm != DialogResult.Yes)
             {
-                return; // User cancelled
+                return; 
             }
 
             bool success = controllerObj.DeleteAccount(username);
 
-            // Show result
+            
             if (success)
             {
                 MessageBox.Show($"✅ Account '{username}' has been permanently deleted.",
@@ -336,7 +336,7 @@ namespace Project
             string selectedEvent = comboBox2.SelectedItem.ToString();
             Controller controllerObj = new Controller();
 
-            // 1. Get Event ID
+            
             int eventID = controllerObj.GetEventID(selectedEvent);
             if (eventID == -1)
             {
@@ -344,14 +344,14 @@ namespace Project
                 return;
             }
 
-            // 2. Decline the event
+           
             bool declined = controllerObj.DeclineEvent(eventID, currentAdminID);
 
             if (declined)
             {
                 MessageBox.Show("Event declined successfully!");
 
-                // 3. Refresh or clear UI
+               
                 textBox3.Clear();
                 comboBox2.SelectedIndex = -1;
                 comboBox1.SelectedIndex = -1;
@@ -372,10 +372,10 @@ namespace Project
                 {
                     Controller controllerObj = new Controller();
 
-                    // Get Agency Name for the selected event
+                    
                     string agencyName = controllerObj.GetAgencyForEvent(selectedEvent);
 
-                    // Display it in the "By:" text box (textBox3)
+                    
                     textBox3.Text = agencyName;
                 }
                 else
