@@ -35,24 +35,11 @@ namespace Project
         {
             
             DataTable dt = controllerObj.getavalaibleevents();
-            // 2. Set the data source for the ComboBox
-
+            
             comboBox1.DataSource = dt;
-
-
-            // 3. Define what the user sees (The Name)
-
             comboBox1.DisplayMember = "Name";
 
-
-            // 4. Define what the program uses (The ID)
-
             comboBox1.ValueMember = "Event_ID";
-
-
-
-            // Optional: Reset selection so nothing is selected by default
-
             comboBox1.SelectedIndex = -1;
 
         }
@@ -80,6 +67,7 @@ namespace Project
                 comboBox2.SelectedIndex = -1;
                 comboBox3.SelectedIndex = -1;
                 textBox2.Text = "";
+                textBox5.Text = "";
 
             }
             

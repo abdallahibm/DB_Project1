@@ -29,6 +29,7 @@ namespace Project
                 MessageBox.Show("Please enter both Username and Password.");
                 return;
             }
+
             if (controllerObj.issuspended(user))
             {
                 MessageBox.Show("you are suspended");
