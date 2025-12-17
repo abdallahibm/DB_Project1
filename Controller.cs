@@ -560,6 +560,7 @@ namespace DBapplication
                 string bookQuery = "INSERT INTO Book (SSN, Ticket_ID, Status, Number_Of_Tickets) VALUES ('" + ssn + "', " + newTicketID + ", 'Active', 1)";
 
                 dbMan.ExecuteNonQuery(bookQuery);
+
             }
 
             string updateQuery = "UPDATE Create_Event SET Available_Tickets = Available_Tickets - " + count + " WHERE Event_ID = " + eventID + " AND Category = '" + category + "'";
@@ -579,7 +580,7 @@ namespace DBapplication
                            "CE.Category, " +
                            "CE.Price, " +
 
-                           // 1. Calculate Ticket Count using a Subquery
+
                            "(" +
                                "SELECT COUNT(*) " +
                                "FROM Tickets T, Book B, Members M " +
@@ -589,8 +590,6 @@ namespace DBapplication
                                "AND T.Event_ID = E.Event_ID " +
                                "AND T.Category = CE.Category" +
                            ") AS TicketCount, " +
-
-                           // 2. Calculate Total Cost (Price * Count)
                            "(" +
                                "CE.Price * " +
                                "(" +
@@ -607,7 +606,6 @@ namespace DBapplication
                            "FROM Events E, Create_Event CE " +
                            "WHERE E.Event_ID = CE.Event_ID " +
 
-                           // 3. Filter: Only show events the user actually has tickets for
                            "AND (" +
                                "SELECT COUNT(*) " +
                                "FROM Tickets T, Book B, Members M " +
@@ -622,8 +620,7 @@ namespace DBapplication
         }
         public string DeleteMemberBooking(string username, int eventID, string category, int count)
         {
-            // 1. Get the Ticket_IDs associated with this booking
-            // We join tables to find the specific tickets for this User + Event + Category
+           
             string getTicketsQuery = "SELECT T.Ticket_ID " +
                                      "FROM Tickets T, Book B, Members M " +
                                      "WHERE T.Ticket_ID = B.Ticket_ID " +
@@ -639,20 +636,16 @@ namespace DBapplication
                 return "Error: No tickets found to delete.";
             }
 
-            // 2. Delete each ticket from 'Book' and 'Tickets' tables
             foreach (DataRow row in ticketsToDelete.Rows)
             {
                 int ticketID = Convert.ToInt32(row["Ticket_ID"]);
 
-                // Delete from Book first (Foreign Key constraint)
+               
                 dbMan.ExecuteNonQuery("DELETE FROM Book WHERE Ticket_ID = " + ticketID);
 
-                // Delete from Tickets
                 dbMan.ExecuteNonQuery("DELETE FROM Tickets WHERE Ticket_ID = " + ticketID);
             }
 
-            // 3. Increment the Available Tickets (Give them back to inventory)
-            // IMPORTANT: We use the 'count' variable here to add back exactly what was deleted
             string updateInventory = "UPDATE Create_Event " +
                                      "SET Available_Tickets = Available_Tickets + " + count + " " +
                                      "WHERE Event_ID = " + eventID + " AND Category = '" + category + "'";

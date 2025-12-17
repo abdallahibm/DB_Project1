@@ -81,8 +81,8 @@ namespace Project
             }
             if (!(comboBox2.SelectedIndex == -1))
             {
-                DataRowView drv = (DataRowView)comboBox2.SelectedItem;
-                string category = drv["Category"].ToString();
+                DataRowView row = (DataRowView)comboBox2.SelectedItem;
+                string category = row["Category"].ToString();
 
 
                 int available = controllerObj.checkticketavailability(eventID, category);
@@ -238,6 +238,16 @@ namespace Project
         }
 
         private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
         {
 
         }
