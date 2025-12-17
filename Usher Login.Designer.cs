@@ -97,6 +97,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Ushers_Login";
             this.Text = "Ushers Login Form";
+            this.Load += new System.EventHandler(this.Ushers_Login_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

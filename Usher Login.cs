@@ -35,16 +35,12 @@ namespace Project
             switch (result)
             {
                 case "SUCCESS":
-                    // Login successful
                     MessageBox.Show("Login successful!");
 
                     long Usher_ID = controller.GetUsherID(username);
-                    Usher f3 = new Usher();
-                    //f3.AdminID = Admin_ID;
+                    Usher f3 = new Usher(Usher_ID);
                     f3.Show();
-
-
-                    this.Hide(); // Hide login form
+                    this.Hide();
                     break;
 
                 case "WRONG_PASSWORD":
@@ -59,6 +55,11 @@ namespace Project
                     MessageBox.Show("An error occurred. Please try again.");
                     break;
             }
+        }
+
+        private void Ushers_Login_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

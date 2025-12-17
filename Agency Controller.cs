@@ -96,14 +96,13 @@ namespace Project
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            // 1. Validation: Ensure required fields are filled
+
             if (New_event_name.Text == "" || comboBox1.SelectedValue == null)
             {
                 MessageBox.Show("Please fill in the Event Name and select a Venue.");
                 return;
             }
 
-            // 2. Get Venue ID safely (Prevent crash if nothing is selected)
             int selectedVenueID;
             if (comboBox1.SelectedValue != null)
             {
@@ -115,22 +114,20 @@ namespace Project
                 return;
             }
 
-            // 3. Call the Controller Function
-            // We must pass EXACTLY 13 arguments to match your new function definition.
             int result = controllerObj.Insert_New_Event(
-                New_event_name.Text,                            // 1. Name
-                selectedVenueID,                                // 2. VenueID (int)
-                dateTimePicker1.Value.ToString("yyyy-MM-dd"),   // 3. Date
-                textBox3.Text,                                  // 4. StartTime
-                textBox2.Text,                                  // 5. Capacity
-                textBox5.Text,                                  // 6. Event Category
-                wallet.Text,                                    // 7. Tickets Category
-                "0",                                            // 8. Price (Set to "0" or your textbox)
-                currentAgencyID,                                // 9. AgencyID
-                textBox9.Text,                                  // 10. Discount
-                textBox6.Text,                                  // 11. Inventory Item 1 <--- MISSING PART FIXED
-                textBox8.Text,                                  // 12. Inventory Item 2 <--- MISSING PART FIXED
-                textBox7.Text                                   // 13. Inventory Item 3 <--- MISSING PART FIXED
+                New_event_name.Text,                            
+                selectedVenueID,                                
+                dateTimePicker1.Value.ToString("yyyy-MM-dd"),   
+                textBox3.Text,                                  
+                textBox2.Text,                                  
+                textBox5.Text,                                  
+                wallet.Text,                                    
+                "0",                                            
+                currentAgencyID,                                
+                textBox9.Text,                                  
+                textBox6.Text,                                  
+                textBox8.Text,                                  
+                textBox7.Text                                   
             );
 
             // 4. Check Result
@@ -152,6 +149,34 @@ namespace Project
                 comboBox1.DisplayMember = "Name";
                 comboBox1.ValueMember = "Venue_ID";
                 comboBox1.SelectedIndex = -1;
+
+
+            DataTable dtEvents = controllerObj.GetAgencyEvents(currentAgencyID);
+
+            comboBox2.DataSource = dtEvents;
+            comboBox2.DisplayMember = "Name";
+            comboBox2.ValueMember = "Event_ID";  
+
+            comboBox2.SelectedIndex = -1;
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            if (comboBox2.SelectedValue == null) return;
+
+            string val = comboBox2.SelectedValue.ToString();
+            if (val == "System.Data.DataRowView") return;
+
+            int eventID = Convert.ToInt32(val);
+            string status = controllerObj.GetEventStatus(eventID);
+
+            textBox4.Text = status;
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

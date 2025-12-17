@@ -34,7 +34,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.TicketID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MemberName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -42,30 +41,31 @@
             // comboBox2
             // 
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(106, 43);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBox2.Location = new System.Drawing.Point(141, 53);
+            this.comboBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(198, 21);
+            this.comboBox2.Size = new System.Drawing.Size(263, 24);
             this.comboBox2.TabIndex = 24;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(442, 43);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox3.Location = new System.Drawing.Point(589, 53);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(191, 20);
+            this.textBox3.Size = new System.Drawing.Size(253, 22);
             this.textBox3.TabIndex = 21;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Sitka Banner", 20.25F);
             this.label3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label3.Location = new System.Drawing.Point(374, 26);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(499, 32);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 39);
+            this.label3.Size = new System.Drawing.Size(82, 49);
             this.label3.TabIndex = 20;
             this.label3.Text = "Date";
             // 
@@ -74,10 +74,9 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Sitka Banner", 20.25F);
             this.label2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label2.Location = new System.Drawing.Point(26, 26);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(35, 32);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 39);
+            this.label2.Size = new System.Drawing.Size(96, 49);
             this.label2.TabIndex = 19;
             this.label2.Text = "Event";
             // 
@@ -86,16 +85,16 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.ColumnHeadersHeight = 29;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TicketID,
-            this.MemberName,
             this.Status});
-            this.dataGridView1.Location = new System.Drawing.Point(33, 119);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView1.Location = new System.Drawing.Point(44, 146);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(600, 262);
+            this.dataGridView1.Size = new System.Drawing.Size(800, 322);
             this.dataGridView1.TabIndex = 25;
             // 
             // TicketID
@@ -104,13 +103,6 @@
             this.TicketID.MinimumWidth = 6;
             this.TicketID.Name = "TicketID";
             this.TicketID.Width = 125;
-            // 
-            // MemberName
-            // 
-            this.MemberName.HeaderText = "Member Name";
-            this.MemberName.MinimumWidth = 6;
-            this.MemberName.Name = "MemberName";
-            this.MemberName.Width = 125;
             // 
             // Status
             // 
@@ -121,17 +113,18 @@
             // 
             // Usher
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(666, 433);
+            this.ClientSize = new System.Drawing.Size(888, 533);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Usher";
             this.Text = "Usher Controller";
+            this.Load += new System.EventHandler(this.Usher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -146,7 +139,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn TicketID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MemberName;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
     }
 }

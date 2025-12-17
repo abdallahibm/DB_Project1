@@ -728,40 +728,28 @@ namespace DBapplication
             return dbMan.ExecuteReader(query);
         }
 
-        // I updated the arguments to include AgencyID and Price
-        // Note: Changed 'string Venue' to 'int VenueID' to match your database
         public int Insert_New_Event(string Name, int VenueID, string date, string startTime,
                             string Capacity, string EventCategory, string TicketsCategory,
                             string Price, int AgencyID, string Discount,
                             string InvItem1, string InvItem2, string InvItem3)
         {
-            // --- PREPARATION ---
-            // Combine Date and Time for the Create_Event table
             string fullDateTimeStr = date + " " + startTime;
 
-            // Parse numbers (safely handle empty strings)
+
             int.TryParse(Capacity, out int capacityVal);
             decimal.TryParse(Price, out decimal priceVal);
             decimal.TryParse(Discount, out decimal discountVal);
 
-            // ---------------------------------------------------------
-            // STEP 1: Insert into 'Events' (Parent Table)
-            // ---------------------------------------------------------
-            // We insert Name, Category, Venue_ID, and Event_Date
             string eventQuery = "INSERT INTO Events (Name, Category, Venue_ID, Event_Date) " +
                                 "VALUES ('" + Name + "', '" + EventCategory + "', " + VenueID + ", '" + date + "'); " +
                                 "SELECT SCOPE_IDENTITY();";
 
             object resultID = dbMan.ExecuteScalar(eventQuery);
 
-            // Stop if the Event creation failed
             if (resultID == null || Convert.ToInt32(resultID) == 0) return 0;
 
             int newEventID = Convert.ToInt32(resultID);
 
-            // ---------------------------------------------------------
-            // STEP 2: Insert into 'Create_Event' (Details Table)
-            // ---------------------------------------------------------
             string createEventQuery = "INSERT INTO Create_Event " +
                                       "(Event_ID, Agency_ID, Category, Price, Maximum_Allowed_Tickets, " +
                                       "Available_Tickets, Date_And_Time, Discounts, Status) " +
@@ -779,31 +767,77 @@ namespace DBapplication
 
             int rowsAffected = dbMan.ExecuteNonQuery(createEventQuery);
 
-            // ---------------------------------------------------------
-            // STEP 3: Insert into 'Inventory' (Items Table)
-            // ---------------------------------------------------------
-            // We check each item textbox; if it has text, we insert a row.
-
             if (!string.IsNullOrEmpty(InvItem1))
             {
-                string invQuery1 = $"INSERT INTO Inventory_Item (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem1}')";
+                string invQuery1 = $"INSERT INTO Event_Inventory (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem1}')";
                 dbMan.ExecuteNonQuery(invQuery1);
             }
 
             if (!string.IsNullOrEmpty(InvItem2))
             {
-                string invQuery2 = $"INSERT INTO Inventory_Item (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem2}')";
+                string invQuery2 = $"INSERT INTO Event_Inventory (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem2}')";
                 dbMan.ExecuteNonQuery(invQuery2);
             }
 
             if (!string.IsNullOrEmpty(InvItem3))
             {
-                string invQuery3 = $"INSERT INTO Inventory_Item (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem3}')";
+                string invQuery3 = $"INSERT INTO Event_Inventory (Event_ID, Agency_ID, Category, Inventory_Item) VALUES ({newEventID}, {AgencyID}, '{TicketsCategory}', '{InvItem3}')";
                 dbMan.ExecuteNonQuery(invQuery3);
             }
 
             return rowsAffected;
         }
+
+        public DataTable GetAgencyEvents(int agencyID)
+        {
+            string query = "SELECT E.Name, E.Event_ID " +
+                           "FROM Events E " +
+                           "JOIN Create_Event CE ON E.Event_ID = CE.Event_ID " +
+                           "WHERE CE.Agency_ID = " + agencyID + ";";
+
+            return dbMan.ExecuteReader(query);
+        }
+
+        public string GetEventStatus(int eventID)
+        {
+            string query = "SELECT Status FROM Create_Event WHERE Event_ID = " + eventID + ";";
+            object result = dbMan.ExecuteScalar(query);
+
+            if (result != null)
+            {
+                return result.ToString();
+            }
+            return "Unknown";
+        }
+
+
+        public bool AddNewAgency(string Agencyname, string supervisor, string username, string password)
+        {
+
+            string checkUserQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{username}'";
+            int existingUser = Convert.ToInt32(dbMan.ExecuteScalar(checkUserQuery));
+
+            if (existingUser > 0)
+            {
+                return false;
+            }
+
+
+            string insertAccountQuery = $"INSERT INTO Accounts (Username, Password) VALUES ('{username}', '{password}')";
+            int accountRows = dbMan.ExecuteNonQuery(insertAccountQuery);
+
+            if (accountRows == 0) return false;
+
+
+            string insertAgencyQuery = $"INSERT INTO Organizing_Agency (Name, Supervisor,Username) VALUES ('{Agencyname}', '{supervisor}', '{username}')";
+
+            int adminRows = dbMan.ExecuteNonQuery(insertAgencyQuery);
+
+
+            return adminRows > 0;
+        }
+
+
         //Usher
         public string ValidateUsherLogin(string username, string password)
         {
@@ -811,13 +845,11 @@ namespace DBapplication
             string checkUserQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{username}'";
             int userCount = Convert.ToInt32(dbMan.ExecuteScalar(checkUserQuery));
 
-            // If username doesn't exist
             if (userCount == 0)
             {
-                return "USER_NOT_FOUND"; // Username not in database
+                return "USER_NOT_FOUND";
             }
 
-            // Check if this user is an Admin
             string checkAdminQuery = $"SELECT COUNT(*) FROM Ushers WHERE Username = '{username}'";
             int Count = Convert.ToInt32(dbMan.ExecuteScalar(checkAdminQuery));
 
@@ -826,24 +858,21 @@ namespace DBapplication
                 return "NOT_Usher"; 
             }
 
-            // Now check if password matches
             string checkPasswordQuery = $"SELECT Password FROM Accounts WHERE Username = '{username}'";
             object result = dbMan.ExecuteScalar(checkPasswordQuery);
 
             if (result == null)
             {
-                return "ERROR"; // Shouldn't happen if username exists
+                return "ERROR";
             }
 
             string storedPassword = result.ToString();
 
-            // Compare passwords
             if (storedPassword != password)
             {
-                return "WRONG_PASSWORD"; // Username exists but password is wrong
+                return "WRONG_PASSWORD";
             }
 
-            // Everything is correct
             return "SUCCESS";
         }
         public long GetUsherID(string username)
@@ -856,6 +885,63 @@ namespace DBapplication
                 return Convert.ToInt64(result);
             }
             return -1;
+        }
+
+        public DataTable getEventsOfUshers(long ID)
+        {
+            string query = "Select e.Name, A.Event_ID From Events e, Allow_Entry A Where A.Usher_SSN = " + ID + " and e.Event_ID = A.Event_ID;";
+            return dbMan.ExecuteReader(query);
+        }
+
+        public DataTable getEventDate(string Event_ID)
+        {
+            string query = "SELECT Event_Date FROM Events WHERE Event_ID = " + Event_ID + ";";
+
+            return dbMan.ExecuteReader(query);
+
+        }
+
+
+        public DataTable GetEventTickets(string eventID)
+        {
+            string query = @"SELECT 
+                        T.Ticket_ID, 
+                        B.Status 
+                     FROM Tickets T
+                     JOIN Book B ON T.Ticket_ID = B.Ticket_ID
+                     WHERE T.Event_ID = " + eventID + ";";
+
+            return dbMan.ExecuteReader(query);
+        }
+
+        public bool AddNewUsher(string firstName, string lastName, string username, string password, string SSN)
+        {
+
+            string checkUserQuery = $"SELECT COUNT(*) FROM Accounts WHERE Username = '{username}'";
+            int existingUser = Convert.ToInt32(dbMan.ExecuteScalar(checkUserQuery));
+
+            if (existingUser > 0)
+            {
+                return false;
+            }
+
+            string insertAccountQuery = $"INSERT INTO Accounts (Username, Password) VALUES ('{username}', '{password}')";
+            int accountRows = dbMan.ExecuteNonQuery(insertAccountQuery);
+
+            if (accountRows == 0) return false;
+
+            string insertUsherQuery = $"INSERT INTO Ushers (First_Name, Last_Name, Username,SSN) VALUES ('{firstName}', '{lastName}', '{username}','{SSN}')";
+
+            int adminRows = dbMan.ExecuteNonQuery(insertUsherQuery);
+
+
+            return adminRows > 0;
+        }
+        public bool AddNewUsherPhone(string SSN, string phonenumber)
+        {
+            string insertPhoneUsherQuery = $"INSERT INTO Usher_Phones (SSN,Phone_Number) VALUES ('{SSN}','{phonenumber}')";
+            int rows = dbMan.ExecuteNonQuery(insertPhoneUsherQuery);
+            return rows > 0;
         }
     }
 }
