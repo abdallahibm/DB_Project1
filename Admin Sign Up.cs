@@ -64,5 +64,12 @@ namespace Project
         {
 
         }
+
+        private void Admin_Sign_Up_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
+
+//comment
