@@ -471,6 +471,17 @@ namespace DBapplication
             }
         }
 
+
+        //void Just_For_Testing()
+        //{
+
+
+
+
+
+
+        //}
+
         public bool Checkemail(string email)
         {
             string query = "SELECT COUNT(*) FROM Members WHERE Email = '" + email + "';";
