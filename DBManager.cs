@@ -12,7 +12,7 @@ namespace DBapplication
 
     {
 
-        static string DB_Connection_String = @"Data Source=.;Initial Catalog=tickect;Integrated Security=True;TrustServerCertificate=True";
+        static string DB_Connection_String = @"Data Source=tasneem;Initial Catalog=Phase_3;Integrated Security=True;TrustServerCertificate=True";
 
         SqlConnection myConnection;
         
@@ -26,7 +26,7 @@ namespace DBapplication
 
                 // this should NOT be shown in GUI to the user in the final application
                 // but we show it here only to make sure that the database is working
-                MessageBox.Show("Successfully connected to the database!");
+                //MessageBox.Show("Successfully connected to the database!");
             }
             catch (Exception e)
             {

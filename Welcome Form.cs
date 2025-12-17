@@ -61,6 +61,14 @@ namespace Project
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Agency_Login A = new Agency_Login();
+            A.Show();
+        }
+
+        private void Ushers_Login_Button_Click(object sender, EventArgs e)
+        {
+            Ushers_Login A = new Ushers_Login();
+            A.Show();
 
         }
     }

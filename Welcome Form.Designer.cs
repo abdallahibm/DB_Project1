@@ -67,7 +67,7 @@
             // 
             this.Sign_Up_Button.Font = new System.Drawing.Font("Sitka Banner", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Sign_Up_Button.Location = new System.Drawing.Point(587, 59);
-            this.Sign_Up_Button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Sign_Up_Button.Margin = new System.Windows.Forms.Padding(4);
             this.Sign_Up_Button.Name = "Sign_Up_Button";
             this.Sign_Up_Button.Size = new System.Drawing.Size(116, 44);
             this.Sign_Up_Button.TabIndex = 2;
@@ -79,7 +79,7 @@
             // 
             this.Members_Login_Button.Font = new System.Drawing.Font("Sitka Banner", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Members_Login_Button.Location = new System.Drawing.Point(587, 149);
-            this.Members_Login_Button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Members_Login_Button.Margin = new System.Windows.Forms.Padding(4);
             this.Members_Login_Button.Name = "Members_Login_Button";
             this.Members_Login_Button.Size = new System.Drawing.Size(116, 44);
             this.Members_Login_Button.TabIndex = 3;
@@ -91,7 +91,7 @@
             // 
             this.Admin_Login_Button.Font = new System.Drawing.Font("Sitka Banner", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Admin_Login_Button.Location = new System.Drawing.Point(59, 289);
-            this.Admin_Login_Button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Admin_Login_Button.Margin = new System.Windows.Forms.Padding(4);
             this.Admin_Login_Button.Name = "Admin_Login_Button";
             this.Admin_Login_Button.Size = new System.Drawing.Size(256, 44);
             this.Admin_Login_Button.TabIndex = 4;
@@ -103,12 +103,13 @@
             // 
             this.Ushers_Login_Button.Font = new System.Drawing.Font("Sitka Banner", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Ushers_Login_Button.Location = new System.Drawing.Point(587, 289);
-            this.Ushers_Login_Button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Ushers_Login_Button.Margin = new System.Windows.Forms.Padding(4);
             this.Ushers_Login_Button.Name = "Ushers_Login_Button";
             this.Ushers_Login_Button.Size = new System.Drawing.Size(175, 44);
             this.Ushers_Login_Button.TabIndex = 5;
             this.Ushers_Login_Button.Text = "Login as an Usher";
             this.Ushers_Login_Button.UseVisualStyleBackColor = true;
+            this.Ushers_Login_Button.Click += new System.EventHandler(this.Ushers_Login_Button_Click);
             // 
             // button1
             // 

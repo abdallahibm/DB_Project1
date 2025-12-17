@@ -53,11 +53,6 @@ namespace Project
             {
                 MessageBox.Show("Username already exists.", "Error");
             }
-
-
-
-
-
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -71,5 +66,3 @@ namespace Project
         }
     }
 }
-
-//comment
