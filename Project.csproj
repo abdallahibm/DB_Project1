@@ -84,6 +84,12 @@
     </Compile>
     <Compile Include="Controller.cs" />
     <Compile Include="DBManager.cs" />
+    <Compile Include="my bookings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="my bookings.Designer.cs">
+      <DependentUpon>my bookings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Members Booking.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Members Booking.resx">
       <DependentUpon>Members Booking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="my bookings.resx">
+      <DependentUpon>my bookings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Usher Sign Up.resx">
       <DependentUpon>Usher Sign Up.cs</DependentUpon>

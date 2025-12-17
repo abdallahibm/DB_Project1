@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
+
 using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace DBapplication
 {
@@ -22,7 +25,7 @@ namespace DBapplication
         // insert functions here
         public void tesast()
         {
-             //test changes;
+            //test changes;
         }
 
         public string ValidateAdminLogin(string username, string password)
@@ -443,7 +446,7 @@ namespace DBapplication
 
             int result1 = dbMan.ExecuteNonQuery(accountQuery);
 
-            if (result1 == 0) return 0; 
+            if (result1 == 0) return 0;
 
             string memberQuery = "INSERT INTO Members " +
                                  "(SSN, First_Name, Last_Name, Email, Phone_Number, Gender, Date_Of_Birth, Nationality, Username) " +
@@ -454,11 +457,11 @@ namespace DBapplication
 
         public bool checkuser(string username)
         {
-           
+
             string query = "SELECT COUNT(*) FROM Accounts WHERE Username = '" + username + "';";
             object result = dbMan.ExecuteScalar(query);
             int count = Convert.ToInt32(result);
-            if(count>0)
+            if (count > 0)
             {
                 return true;
             }
@@ -486,7 +489,7 @@ namespace DBapplication
         }
         public bool checkssn(string ssn)
         {
-            string query= "SELECT COUNT(*) FROM Members WHERE SSN = '" + ssn + "';";
+            string query = "SELECT COUNT(*) FROM Members WHERE SSN = '" + ssn + "';";
             object result = dbMan.ExecuteScalar(query);
             int count = Convert.ToInt32(result);
             if (count > 0)
@@ -498,8 +501,179 @@ namespace DBapplication
                 return false;
             }
         }
+        public DataTable getavalaibleevents()
+        {
 
+            string query = "SELECT DISTINCT E.Event_ID, E.Name FROM Events E JOIN Create_Event CE ON E.Event_ID = CE.Event_ID WHERE CE.Status = 'Approved';";
+
+            return dbMan.ExecuteReader(query);
+        }
+
+        public DataTable getticketcategories(int eventID)
+        {
+
+            string query = "SELECT Category, Price FROM Create_Event WHERE Event_ID = " + eventID + " AND Status = 'Approved';";
+
+            return dbMan.ExecuteReader(query);
+        }
+        public string getmemberssn(string username)
+        {
+            string query = "SELECT SSN FROM Members WHERE Username = '" + username + "'";
+            object result = dbMan.ExecuteScalar(query);
+            if (result == null)
+                return null;
+            else
+                return result.ToString();
+
+        }
+
+        public int checkticketavailability(int eventID, string category)
+        {
+            string query = "SELECT Available_Tickets FROM Create_Event WHERE Event_ID = " + eventID + " AND Category = '" + category + "'";
+
+            object result = dbMan.ExecuteScalar(query);
+            if (result == null)
+                return 0;
+            else
+                return Convert.ToInt32(result);
+        }
+
+        
+        public string BookTickets(string username, int eventID, string category, int count, string paymentMethod)
+        {
+            string ssn = getmemberssn(username);
+            if (ssn == null)
+            {
+                return "Error: User SSN not found.";
+            }
+
+            int available = checkticketavailability(eventID, category);
+            if (available < count)
+            {
+                return "Not enough tickets. Only " + available + " left.";
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                string ticketQuery = "INSERT INTO Tickets (Event_ID, Payment_Method, Category) VALUES (" + eventID + ", '" + paymentMethod + "', '" + category + "'); SELECT SCOPE_IDENTITY();";
+                int newTicketID = Convert.ToInt32(dbMan.ExecuteScalar(ticketQuery));
+                string bookQuery = "INSERT INTO Book (SSN, Ticket_ID, Status, Number_Of_Tickets) VALUES ('" + ssn + "', " + newTicketID + ", 'Active', 1)";
+
+                dbMan.ExecuteNonQuery(bookQuery);
+            }
+
+            string updateQuery = "UPDATE Create_Event SET Available_Tickets = Available_Tickets - " + count + " WHERE Event_ID = " + eventID + " AND Category = '" + category + "'";
+
+            int result = dbMan.ExecuteNonQuery(updateQuery);
+
+            if (result > 0)
+                return "Success";
+            else
+                return "Error updating inventory";
+        }
+        public DataTable GetMemberBookingsDetailed(string username)
+        {
+            string query = "SELECT DISTINCT " +
+                           "E.Name, " +
+                           "E.Event_ID, " +
+                           "CE.Category, " +
+                           "CE.Price, " +
+
+                           // 1. Calculate Ticket Count using a Subquery
+                           "(" +
+                               "SELECT COUNT(*) " +
+                               "FROM Tickets T, Book B, Members M " +
+                               "WHERE T.Ticket_ID = B.Ticket_ID " +
+                               "AND B.SSN = M.SSN " +
+                               "AND M.Username = '" + username + "' " +
+                               "AND T.Event_ID = E.Event_ID " +
+                               "AND T.Category = CE.Category" +
+                           ") AS TicketCount, " +
+
+                           // 2. Calculate Total Cost (Price * Count)
+                           "(" +
+                               "CE.Price * " +
+                               "(" +
+                                   "SELECT COUNT(*) " +
+                                   "FROM Tickets T, Book B, Members M " +
+                                   "WHERE T.Ticket_ID = B.Ticket_ID " +
+                                   "AND B.SSN = M.SSN " +
+                                   "AND M.Username = '" + username + "' " +
+                                   "AND T.Event_ID = E.Event_ID " +
+                                   "AND T.Category = CE.Category" +
+                               ")" +
+                           ") AS TotalCost " +
+
+                           "FROM Events E, Create_Event CE " +
+                           "WHERE E.Event_ID = CE.Event_ID " +
+
+                           // 3. Filter: Only show events the user actually has tickets for
+                           "AND (" +
+                               "SELECT COUNT(*) " +
+                               "FROM Tickets T, Book B, Members M " +
+                               "WHERE T.Ticket_ID = B.Ticket_ID " +
+                               "AND B.SSN = M.SSN " +
+                               "AND M.Username = '" + username + "' " +
+                               "AND T.Event_ID = E.Event_ID " +
+                               "AND T.Category = CE.Category" +
+                           ") > 0";
+
+            return dbMan.ExecuteReader(query);
+        }
+        public string DeleteMemberBooking(string username, int eventID, string category, int count)
+        {
+            // 1. Get the Ticket_IDs associated with this booking
+            // We join tables to find the specific tickets for this User + Event + Category
+            string getTicketsQuery = "SELECT T.Ticket_ID " +
+                                     "FROM Tickets T, Book B, Members M " +
+                                     "WHERE T.Ticket_ID = B.Ticket_ID " +
+                                     "AND B.SSN = M.SSN " +
+                                     "AND M.Username = '" + username + "' " +
+                                     "AND T.Event_ID = " + eventID + " " +
+                                     "AND T.Category = '" + category + "'";
+
+            DataTable ticketsToDelete = dbMan.ExecuteReader(getTicketsQuery);
+
+            if (ticketsToDelete == null || ticketsToDelete.Rows.Count == 0)
+            {
+                return "Error: No tickets found to delete.";
+            }
+
+            // 2. Delete each ticket from 'Book' and 'Tickets' tables
+            foreach (DataRow row in ticketsToDelete.Rows)
+            {
+                int ticketID = Convert.ToInt32(row["Ticket_ID"]);
+
+                // Delete from Book first (Foreign Key constraint)
+                dbMan.ExecuteNonQuery("DELETE FROM Book WHERE Ticket_ID = " + ticketID);
+
+                // Delete from Tickets
+                dbMan.ExecuteNonQuery("DELETE FROM Tickets WHERE Ticket_ID = " + ticketID);
+            }
+
+            // 3. Increment the Available Tickets (Give them back to inventory)
+            // IMPORTANT: We use the 'count' variable here to add back exactly what was deleted
+            string updateInventory = "UPDATE Create_Event " +
+                                     "SET Available_Tickets = Available_Tickets + " + count + " " +
+                                     "WHERE Event_ID = " + eventID + " AND Category = '" + category + "'";
+
+            int result = dbMan.ExecuteNonQuery(updateInventory);
+
+            return result > 0 ? "Success" : "Error updating inventory";
+        }
+        public bool issuspended(string user)
+        {
+
+            string query = "SELECT Status FROM Members WHERE Username = '" + user + "'";
+
+            object result = dbMan.ExecuteScalar(query);
+            string s = Convert.ToString(result);
+            if(s== "Suspended")
+            {
+                return true;
+            }
+            return false;
+        }
 
     }
-
 }
