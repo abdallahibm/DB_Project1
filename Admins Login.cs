@@ -50,7 +50,7 @@ namespace Project
             switch (result)
             {
                 case "SUCCESS":
-                    // Login successful
+                    
                     MessageBox.Show("Login successful!");
 
                     int Admin_ID = controller.GetAdminID(username);
@@ -59,7 +59,7 @@ namespace Project
                     f3.Show();
                     
                     
-                    this.Hide(); // Hide login form
+                    this.Hide(); 
                     break;
 
                 case "WRONG_PASSWORD":
@@ -69,10 +69,10 @@ namespace Project
                 case "USER_NOT_FOUND":
                     MessageBox.Show("Username not found. You need to sign up as an administrator.");
 
-                    // Open Admin Sign Up form
+                    
                     Admin_Sign_Up signUpForm = new Admin_Sign_Up();
                     signUpForm.Show();
-                    this.Hide(); // Optional: hide login form
+                    this.Hide(); 
                     break;
 
                 case "NOT_ADMIN":
